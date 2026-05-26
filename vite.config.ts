@@ -8,8 +8,7 @@ export default defineConfig({
         open: true,
     },
     build: {
-        outDir: "public/build",
-        emptyOutDir: false,
+        outDir: "dist",
         chunkSizeWarningLimit: 1024,
     },
 });
