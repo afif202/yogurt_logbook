@@ -1,58 +1,234 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🥛 YogurtTrack — Logbook Proyek Yogurt
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+> Platform logbook digital untuk pemantauan proyek fermentasi yogurt siswa, berbasis indikator ilmiah dengan evaluasi otomatis.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📋 Daftar Isi
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- [Tentang Aplikasi](#-tentang-aplikasi)
+- [Teknologi](#-teknologi)
+- [Struktur Proyek](#-struktur-proyek)
+- [Setup & Instalasi](#-setup--instalasi)
+- [Variabel Lingkungan](#-variabel-lingkungan)
+- [Fitur](#-fitur)
+- [Changelog Update Terbaru](#-changelog-update-terbaru)
+- [Deployment](#-deployment)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🧪 Tentang Aplikasi
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**YogurtTrack** adalah aplikasi logbook digital berbasis web yang dirancang untuk mendukung proyek fermentasi yogurt di lingkungan sekolah. Aplikasi ini memungkinkan:
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Siswa** mengisi pengamatan bertahap (formulasi, produksi, jam ke-8, jam ke-12 final)
+- **Guru** memantau progress seluruh kelompok secara real-time dari dashboard terpusat
+- Evaluasi otomatis berdasarkan parameter ilmiah (warna, aroma, tekstur, rasa, pH)
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+---
 
-## Agentic Development
+## ⚙️ Teknologi
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+| Layer | Teknologi |
+|-------|-----------|
+| Framework | React 18 + TypeScript |
+| Build Tool | Vite 7 |
+| Routing | React Router DOM v6 |
+| Database & Auth | Supabase (PostgreSQL) |
+| Icons | Lucide React |
+| Export | html2canvas |
+| Password Hashing | bcryptjs |
+| Styling | Vanilla CSS (yogurt.css + yogurt-extra.css) |
 
-```bash
-composer require laravel/boost --dev
+---
 
-php artisan boost:install
+## 📁 Struktur Proyek
+
+```
+yogurt_logbook/
+├── src/
+│   ├── components/
+│   │   ├── StageForm.tsx       # Form pengisian tiap tahap (1–4)
+│   │   ├── StageView.tsx       # Tampilan readonly data tahap
+│   │   ├── Lightbox.tsx        # Modal preview foto (zoom in/out)
+│   │   ├── EvaluationCard.tsx  # Kartu hasil evaluasi ilmiah
+│   │   └── ...
+│   ├── pages/
+│   │   ├── Login.tsx           # Halaman login (siswa & guru)
+│   │   ├── StudentDashboard.tsx   # Dashboard siswa (multi-tahap)
+│   │   ├── TeacherDashboard.tsx   # Dashboard guru (semua kelompok)
+│   │   └── StudentDetail.tsx   # Detail logbook siswa (view guru)
+│   ├── services/
+│   │   └── evaluator.ts        # Logika evaluasi parameter yogurt
+│   ├── utils/
+│   │   ├── supabase.ts         # Supabase client
+│   │   └── imageCompressor.ts  # Kompresi gambar client-side
+│   ├── yogurt.css              # Design system utama
+│   └── yogurt-extra.css        # Style tambahan & komponen
+├── .env                        # Konfigurasi Supabase (tidak di-commit)
+├── .env.example                # Template variabel lingkungan
+├── vercel.json                 # Konfigurasi deployment Vercel
+└── vite.config.ts
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+---
 
-## Contributing
+## 🚀 Setup & Instalasi
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Prasyarat
 
-## Code of Conduct
+- Node.js v18+
+- npm v9+
+- Akun Supabase (gratis)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Langkah Instalasi
 
-## Security Vulnerabilities
+```bash
+# 1. Clone repositori
+git clone <repo-url>
+cd yogurt_logbook
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# 2. Install dependensi
+npm install
 
-## License
+# 3. Buat file .env (salin dari template)
+copy .env.example .env
+# Isi VITE_SUPABASE_URL dan VITE_SUPABASE_PUBLISHABLE_KEY
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+# 4. Jalankan dev server
+npm run dev
+
+# 5. Buka browser
+# http://localhost:5173
+```
+
+### Build Produksi
+
+```bash
+npm run build
+# Output tersedia di folder /dist
+```
+
+---
+
+## 🔑 Variabel Lingkungan
+
+Buat file `.env` di root proyek dengan isi berikut:
+
+```env
+VITE_SUPABASE_URL=https://<project-id>.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_<key>
+```
+
+> ⚠️ Jangan pernah commit file `.env` ke repositori publik. File ini sudah ditambahkan ke `.gitignore`.
+
+---
+
+## ✨ Fitur
+
+### 👨‍🎓 Dashboard Siswa
+
+- **Tahap 1 — Formulasi:** Input kelompok, ekstrak, komposisi bahan, foto bahan
+- **Tahap 2 — Hari Produksi:** Catat proses pembuatan, prediksi keberhasilan, pengamatan jam ke-0
+- **Tahap 3 — Pengamatan Jam ke-8:** Warna, aroma, tekstur, rasa, foto
+- **Tahap 4 — Pengamatan Final (Jam ke-12):** Pengukuran pH akhir, foto kertas lakmus, kesimpulan awal
+- Progress tracker visual antar tahap
+- Validasi form dengan highlight field yang belum diisi
+
+### 👩‍🏫 Dashboard Guru
+
+- Daftar seluruh kelompok siswa dan status tahap mereka
+- Klik detail kelompok untuk melihat seluruh logbook
+- Rekap tabel pengamatan organoleptik (warna, aroma, rasa, tekstur)
+- Evaluasi otomatis: indikator keberhasilan fermentasi
+- Reset data pengamatan per tahap
+- Export laporan (html2canvas)
+
+### 🔬 Evaluasi Otomatis
+
+Evaluasi berbasis indikator ilmiah pada `evaluator.ts`:
+
+| Parameter | Indikator Normal |
+|-----------|-----------------|
+| **Warna** | Putih, krem, atau warna sesuai ekstrak buah |
+| **Aroma** | Asam segar, khas yogurt, aroma buah (termasuk "segar") |
+| **Tekstur** | Kental, semi-padat |
+| **Rasa** | Asam manis, khas yogurt |
+| **pH** | Diukur manual, dinilai dari hasil kertas lakmus |
+
+---
+
+## 📝 Changelog Update Terbaru
+
+### v1.1.0 — Mei 2026
+
+#### 🗄️ Integrasi Supabase
+- Menambahkan `@supabase/supabase-js` sebagai dependensi
+- Membuat `src/utils/supabase.ts` — client Supabase terpusat
+- Menghubungkan seluruh operasi data (baca/tulis) ke Supabase
+- Memperbaiki bug: murid tidak muncul di dashboard guru karena koneksi database belum terkonfigurasi
+
+#### 🖼️ Kompresi Gambar Client-Side
+- **File baru:** `src/utils/imageCompressor.ts`
+- Mengompresi gambar sebelum disimpan ke database menggunakan HTML5 Canvas API
+- Spesifikasi kompresi:
+  - Maksimal dimensi: **800 × 800 px** (mempertahankan rasio aspek)
+  - Format output: **JPEG** dengan kualitas **0.7**
+  - Fallback otomatis ke file asli jika kompresi gagal
+- Batas upload dinaikkan dari **5 MB → 15 MB** (foto HP modern tetap bisa diupload, lalu dikompresi)
+- Integrasi di semua field upload foto pada `StageForm.tsx`
+
+#### 🐛 Bug Fix: Evaluasi Aroma "Segar"
+- **File:** `src/services/evaluator.ts`
+- Aroma **"segar"** sebelumnya dievaluasi sebagai *tidak normal* (salah)
+- Diperbaiki: menambahkan `'segar'` ke daftar keyword positif di fungsi `resolveAromaNormal`
+- Aroma seperti "asam segar", "segar", "susu segar" kini dievaluasi dengan benar sebagai normal
+
+#### 🔍 Redesign Lightbox Preview Foto
+- **File:** `src/components/Lightbox.tsx`, `src/yogurt-extra.css`
+- Mengganti tombol emoji (`🔍-` / `🔍+` / `❌`) dengan **SVG icon** yang bersih dan konsisten
+- Desain tombol zoom dikelompokkan dalam pill transparan
+- Close button (`✕`) dengan animasi rotasi 90° saat hover
+- Warna modal sepenuhnya menyesuaikan background app (dark navy `#0a0f1d`)
+- Menghapus CSS lightbox duplikat di `index.css` yang menyebabkan konflik warna (toolbar hitam berbeda, area gambar solid `#000`, caption bergaris)
+- Keyboard shortcut: `Esc` tutup, `+` zoom in, `-` zoom out, `0` reset
+- Scroll mouse untuk zoom
+
+#### 🏷️ Fix Label Tombol Submit Tahap 4
+- **File:** `src/components/StageForm.tsx`
+- Tombol submit pada Tahap 4 sebelumnya salah menampilkan **"Simpan Pengamatan Jam ke-8"**
+- Diperbaiki: Tahap 4 menampilkan **"Selesai & Lihat Hasil"** (dengan icon centang)
+
+#### 🔒 Hapus Hint pH untuk Anti-Curang
+- **File:** `src/components/StageForm.tsx`
+- Menghapus fungsi `getPhHint()` yang menampilkan hint real-time saat siswa mengetik nilai pH
+- Sebelumnya: muncul pesan seperti *"✔️ pH optimal yogurt berhasil (3,8–4,5)"* yang bisa dimanfaatkan siswa untuk memasukkan angka pH yang "benar" tanpa benar-benar mengukur
+- Sekarang: input pH bersih tanpa petunjuk rentang nilai
+
+---
+
+## 🌐 Deployment
+
+### Vercel (Rekomendasi)
+
+Lihat panduan lengkap di [`Vercel_DEPLOY.md`](./Vercel_DEPLOY.md).
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy
+vercel --prod
+```
+
+Pastikan environment variables (`VITE_SUPABASE_URL`, `VITE_SUPABASE_PUBLISHABLE_KEY`) sudah diisi di dashboard Vercel.
+
+### Ngrok (Akses Lokal via Internet)
+
+Lihat panduan di [`NGROK_SETUP.md`](./NGROK_SETUP.md) untuk mengekspos dev server lokal ke internet.
+
+---
+
+## 📜 Lisensi
+
+Proyek ini dikembangkan untuk keperluan pendidikan. Hak cipta © 2026.

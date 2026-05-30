@@ -102,7 +102,7 @@ export function resolveAromaNormal(aromaText: string | null, storedFlag: boolean
 
   const positive = [
     'asam khas', 'asam segar', 'aroma buah', 'aroma sayur', 'khas yogurt', 'asam',
-    'manis', 'buah', 'susu', 'susu segar', 'stroberi', 'strawberry', 'blueberry',
+    'segar', 'manis', 'buah', 'susu', 'susu segar', 'stroberi', 'strawberry', 'blueberry',
     'anggur', 'pisang', 'apel', 'jeruk', 'lemon', 'mangga', 'vanila', 'vanilla'
   ];
   if (containsAny(value, positive)) {

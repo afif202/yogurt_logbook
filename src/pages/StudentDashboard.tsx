@@ -140,12 +140,18 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ user, onLogo
 
       // If submitting stage 4 (Jam ke-12), auto-generate stage 5 (Lab Report, DB 6)
       if (activeStage === 4) {
+        const fullStagesData = {
+          ...stagesData,
+          5: { data: formData }
+        };
+        const evaluation = evaluateFromStages(fullStagesData);
+
         const { error: autoError } = await supabase
           .from('logbook_stages')
           .upsert({
             logbook_id: logbook.id,
             stage_number: 6,
-            data: { auto: true },
+            data: { auto: true, evaluation },
             submitted_at: new Date().toISOString()
           }, { onConflict: 'logbook_id, stage_number' });
 

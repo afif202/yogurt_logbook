@@ -20,6 +20,7 @@ import {
     FileText,
     Check,
 } from "lucide-react";
+import { compressImage } from "../utils/imageCompressor";
 
 interface StageFormProps {
     stageNum: number; // 1: Formulation, 2: Production Day, 3: Jam ke-8, 4: Jam ke-12
@@ -113,18 +114,34 @@ export const StageForm: React.FC<StageFormProps> = ({
         const file = e.target.files?.[0];
         if (!file) return;
 
-        if (file.size > 5 * 1024 * 1024) {
-            alert("File terlalu besar. Maksimal 5MB.");
+        if (file.size > 15 * 1024 * 1024) {
+            alert("File terlalu besar. Maksimal 15MB.");
             e.target.value = "";
             return;
         }
 
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            const base64 = event.target?.result as string;
-            updateField(fieldPath, base64);
-        };
-        reader.readAsDataURL(file);
+        if (file.type.startsWith("image/")) {
+            compressImage(file)
+                .then((compressedBase64) => {
+                    updateField(fieldPath, compressedBase64);
+                })
+                .catch((err) => {
+                    console.error("Gagal mengompres gambar, menggunakan file asli:", err);
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const base64 = event.target?.result as string;
+                        updateField(fieldPath, base64);
+                    };
+                    reader.readAsDataURL(file);
+                });
+        } else {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const base64 = event.target?.result as string;
+                updateField(fieldPath, base64);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const updateField = (path: string, value: any) => {
@@ -352,30 +369,8 @@ export const StageForm: React.FC<StageFormProps> = ({
         onSubmit(normalStatus);
     };
 
-    // Live pH hint for Stage 4
-    const getPhHint = () => {
-        const val = parseFloat(formData.ph_akhir);
-        if (isNaN(val) || formData.ph_akhir === "") return null;
-        if (val >= 3.8 && val <= 4.5) {
-            return (
-                <span className="hint-block hint-optimal">
-                    ✔️ pH optimal yogurt berhasil (3,8–4,5)
-                </span>
-            );
-        } else if (val < 3.8) {
-            return (
-                <span className="hint-block hint-warning">
-                    ❗ pH terlalu asam — di bawah 3,8
-                </span>
-            );
-        } else {
-            return (
-                <span className="hint-block hint-warning">
-                    ❗ pH masih tinggi — fermentasi belum optimal (di atas 4,5)
-                </span>
-            );
-        }
-    };
+
+
 
     return (
         <>
@@ -631,7 +626,7 @@ export const StageForm: React.FC<StageFormProps> = ({
                                         />
                                     </div>
                                     <p>Klik untuk pilih foto bahan</p>
-                                    <small>Format JPG/PNG, maksimal 5MB</small>
+                                    <small>Format JPG/PNG, maksimal 15MB (akan dikompresi)</small>
                                     <input
                                         type="file"
                                         ref={fileRef1}
@@ -1055,7 +1050,7 @@ export const StageForm: React.FC<StageFormProps> = ({
                                                 lakmus
                                             </p>
                                             <small>
-                                                Format JPG/PNG, maks. 5MB
+                                                Format JPG/PNG, maks. 15MB (akan dikompresi)
                                             </small>
                                             <input
                                                 type="file"
@@ -1162,7 +1157,7 @@ export const StageForm: React.FC<StageFormProps> = ({
                                         Klik untuk pilih foto kondisi awal
                                         yogurt
                                     </p>
-                                    <small>JPG/PNG, maks. 5MB</small>
+                                    <small>JPG/PNG, maks. 15MB (akan dikompresi)</small>
                                     <input
                                         type="file"
                                         ref={fileRef2_2}
@@ -1872,7 +1867,6 @@ export const StageForm: React.FC<StageFormProps> = ({
                                                     pH
                                                 </span>
                                             </div>
-                                            {getPhHint()}
                                         </div>
                                         <div className="form-group">
                                             <label>
@@ -1974,7 +1968,7 @@ export const StageForm: React.FC<StageFormProps> = ({
                                                     </p>
                                                     <small>
                                                         Format JPG/PNG, maks.
-                                                        5MB
+                                                        15MB (akan dikompresi)
                                                     </small>
                                                     <input
                                                         type="file"
@@ -2068,7 +2062,7 @@ export const StageForm: React.FC<StageFormProps> = ({
                                 ) : (
                                     <>
                                         Simpan Pengamatan Jam ke-8{" "}
-                                        <ArrowRight className="w-4 h-4" />
+                                        <ArrowRight className="w-4 h-4" style={{ width: "16px", height: "16px" }} />
                                     </>
                                 )}
                             </button>

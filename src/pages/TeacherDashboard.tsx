@@ -5,7 +5,7 @@ import {
   FlaskConical, CheckCircle, AlertCircle, ListTodo, ArrowRight
 } from 'lucide-react';
 import { supabase } from '../utils/supabase';
-import { STAGES_DEF, UI_TO_DB_STAGE, evaluateFromStages } from '../services/evaluator';
+import { STAGES_DEF, UI_TO_DB_STAGE } from '../services/evaluator';
 
 interface TeacherDashboardProps {
   user: any;
@@ -43,28 +43,36 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ user, onLogo
 
       if (lbsError) throw lbsError;
 
-      // Fetch all logbook stages
-      const { data: stages, error: stagesError } = await supabase
+      // Fetch all logbook stages metadata (extremely lightweight, no image payload)
+      const { data: stagesMeta, error: stagesError } = await supabase
         .from('logbook_stages')
-        .select('*');
+        .select('id, logbook_id, stage_number, submitted_at');
 
       if (stagesError) throw stagesError;
+
+      // Fetch only the stage 6 records (Lab Report containing pre-calculated evaluations)
+      const { data: stagesReport, error: reportError } = await supabase
+        .from('logbook_stages')
+        .select('logbook_id, data')
+        .eq('stage_number', 6);
+
+      if (reportError) throw reportError;
 
       // Map data
       const studentList = users.map((student: any) => {
         const lb = logbooks.find((l: any) => l.user_id === student.id);
-        const lbStages = lb ? stages.filter((s: any) => s.logbook_id === lb.id) : [];
+        const lbStages = lb ? stagesMeta.filter((s: any) => s.logbook_id === lb.id) : [];
         
         const stagesData: Record<number, any> = {};
         lbStages.forEach((s: any) => {
           stagesData[s.stage_number] = {
-            data: s.data,
             submitted_at: s.submitted_at
           };
         });
 
-        const doneCount = Object.keys(stagesData).length; // total database stages
-        const evaluation = doneCount >= 4 ? evaluateFromStages(stagesData) : null;
+        const doneCount = lbStages.length;
+        const report = lb ? stagesReport.find((s: any) => s.logbook_id === lb.id) : null;
+        const evaluation = report?.data?.evaluation || null;
         
         return {
           user: student,
@@ -72,7 +80,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ user, onLogo
           done: doneCount,
           pct: Math.round((doneCount / 5) * 100),
           evaluation,
-          kelompok: stagesData[1]?.data?.kelompok || student.group_name || null
+          kelompok: student.group_name || null
         };
       });
 
